@@ -1,0 +1,10 @@
+{
+    "name": "asparticles",
+    "url": "https://github.com/hoothin/asparticles",
+    "license": "None",
+    "tags": ["asparticles"],
+    "description": "Haxe particle engine",
+    "version": "0.0.1",
+    "releasenote": "Initial haxe 3 version",
+    "contributors": ["hoothin"]
+}
