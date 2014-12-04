@@ -321,6 +321,7 @@ class ASParticleSystem extends Sprite {
 		emitCounter = 0;
 		beforeAddCallBack = null;
 		texture = new Bitmap();
+		elapsed = 0;
     }
 
 
@@ -751,6 +752,7 @@ Fix so that it uses texture map from plist
         var TILE_FIELDS = 9;
         var particle;
 
+		if (texture.bitmapData == null) return;
 		texture.bitmapData.fillRect(texture.bitmapData.rect, 0x00000000);
 		var mat:Matrix = new Matrix();
 		if(particles != null)
@@ -772,7 +774,9 @@ Fix so that it uses texture map from plist
 			mat.identity();
 			mat.rotate(particle.rotation / 180 * Math.PI);
 			mat.scale(drawList[index + 3], drawList[index + 3]);
-			mat.translate(particle.pos.x, particle.pos.y);
+			texture.x = -texture.width / 2;
+			texture.y = -texture.height / 2;
+			mat.translate(particle.pos.x - texture.x, particle.pos.y - texture.y);
 			texture.bitmapData.draw(particleBMD, mat, new ColorTransform(particle.color.r, particle.color.g, particle.color.b), null, null, true);
 			#end
         }
@@ -860,7 +864,7 @@ Fix so that it uses texture map from plist
 
                     radial = new Point(0, 0);
 // radial acceleration
-                    if (p.pos.x > 0 || p.pos.y > 0)
+                    if (p.pos.x != 0 && p.pos.y != 0)
                         radial = ASPointExtensions.normalize(p.pos);
                     tangential = radial;
 
