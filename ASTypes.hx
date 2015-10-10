@@ -49,6 +49,10 @@ typedef B = {
     var endRadiusVar:Float ;
     var rotatePerSecond:Float;
     var rotatePerSecondVar:Float;
+	var angle :Float;
+	var degreesPerSecond :Float;
+	var radius :Float;
+	var deltaRadius :Float;
 }
 typedef Mode = {
     var A:A;

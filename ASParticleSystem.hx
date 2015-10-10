@@ -179,7 +179,7 @@ class ASParticleSystem extends Sprite {
 // Maximum particles
     public var totalParticles:Int;
 // Count of active particles
-    public var particleCount:Int;
+    public var particleCount:Int = 0;
 
 // color modulate
 //	var colorModulate :Bool;
@@ -434,7 +434,7 @@ class ASParticleSystem extends Sprite {
 // Mode A: Gravity + tangential accel + radial accel
         mode = {
         A:{ gravity:new Point(), dir: new Point(), speed:.0, speedVar:.0, tangentialAccel:.0, tangentialAccelVar:.0, radialAccel:.0, radialAccelVar:.0 },
-        B:{startRadius:.0, startRadiusVar:.0, endRadius:.0, endRadiusVar:.0, rotatePerSecond:.0, rotatePerSecondVar:.0 }
+        B:{startRadius:.0, startRadiusVar:.0, endRadius:.0, endRadiusVar:.0, rotatePerSecond:.0, rotatePerSecondVar:.0, radius:.0, deltaRadius:.0, degreesPerSecond:.0, angle:.0}
         };
 
         if (emitterMode == kCCParticleModeGravity) {
@@ -716,22 +716,21 @@ Fix so that it uses texture map from plist
 // Mode Radius: B
         else {
 // Set the default diameter of the particle from the source position
-/*var startRadius :Float = mode.B.startRadius + mode.B.startRadiusVar * ASMacros.RANDOM_MINUS1_1();
-		var endRadius :Float = mode.B.endRadius + mode.B.endRadiusVar * ASMacros.RANDOM_MINUS1_1();
+			var startRadius :Float = mode.B.startRadius + mode.B.startRadiusVar * ASMacros.RANDOM_MINUS1_1();
+			var endRadius :Float = mode.B.endRadius + mode.B.endRadiusVar * ASMacros.RANDOM_MINUS1_1();
 
-		startRadius *= ASConfig.ASCONTENT_SCALE_FACTOR;
-		endRadius *= ASConfig.ASCONTENT_SCALE_FACTOR;
+			startRadius *= ASConfig.ASCONTENT_SCALE_FACTOR;
+			endRadius *= ASConfig.ASCONTENT_SCALE_FACTOR;
+			
+			particle.mode.B.startRadius = startRadius;
+
+			if( mode.B.endRadius == kCCParticleStartRadiusEqualToEndRadius )
+				particle.mode.B.deltaRadius = 0;
+			else
+				particle.mode.B.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
 		
-		particle.mode.B.startRadius = startRadius;
-
-		if( mode.B.endRadius == kCCParticleStartRadiusEqualToEndRadius )
-			particle.mode.B.deltaRadius = 0;
-		else
-			particle.mode.B.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
-	
-		particle.mode.B.angle = a;
-		particle.mode.B.degreesPerSecond = ASMacros.ASDEGREES_TO_RADIANS (mode.B.rotatePerSecond + mode.B.rotatePerSecondVar * ASMacros.RANDOM_MINUS1_1());
-		*/
+			particle.mode.B.angle = a;
+			particle.mode.B.degreesPerSecond = ASMacros.ASDEGREES_TO_RADIANS (mode.B.rotatePerSecond + mode.B.rotatePerSecondVar * ASMacros.RANDOM_MINUS1_1());
         }
     }
 
@@ -752,16 +751,14 @@ Fix so that it uses texture map from plist
         var TILE_FIELDS = 9;
         var particle;
 
-		if (texture.bitmapData == null) return;
+		drawList = [];
+		if (texture.bitmapData == null || particles == null || particles.length == 0) return;
 		texture.bitmapData.fillRect(texture.bitmapData.rect, 0x00000000);
 		var mat:Matrix = new Matrix();
-		if(particles != null)
         for (i in 0...particles.length) {
             particle = particles[i];
-
 //Setup our tile fields?
             var index = i * TILE_FIELDS;
-
             drawList[index] = particle.pos.x;
             drawList[index + 1] = particle.pos.y;
             drawList[index + 3] = particle.size / particleBMD.width; //Scale
@@ -769,7 +766,7 @@ Fix so that it uses texture map from plist
             drawList[index + 5] = particle.color.r;
             drawList[index + 6] = particle.color.g;
             drawList[index + 7] = particle.color.b;
-            drawList[index + 8] = 1.0; //Alpha
+            drawList[index + 8] = particle.color.a; //Alpha
 			#if flash
 			mat.identity();
 			mat.rotate(particle.rotation / 180 * Math.PI);
@@ -892,11 +889,11 @@ Fix so that it uses texture map from plist
                 else {
 
 // Update the angle and radius of the particle.
-/*p.mode.B.angle += p.mode.B.degreesPerSecond * dt;
-				p.mode.B.radius += p.mode.B.deltaRadius * dt;
-				
-				p.pos.x = - Math.cos(p.mode.B.angle) * p.mode.B.radius;
-				p.pos.y = - Math.sin(p.mode.B.angle) * p.mode.B.radius;*/
+					p.mode.B.angle += p.mode.B.degreesPerSecond * dt;
+					p.mode.B.radius += p.mode.B.deltaRadius * dt;
+					
+					p.pos.x = - Math.cos(p.mode.B.angle) * p.mode.B.radius;
+					p.pos.y = - Math.sin(p.mode.B.angle) * p.mode.B.radius;
                 }
 
 // color
@@ -938,14 +935,14 @@ UPDATE PARTICLE IN EITHER POINT OR QUAD SYSTEM
 // life < 0
 
 //If this is not the last particle
-                if (particleIdx != particleCount - 1) {
+                //if (particleIdx != particleCount - 1) {
 
 //particles[particleIdx] = particles[particleCount-1];
 //removeChild(particles[particleIdx].test);
 
 //Remove particle
                     particles.splice(particleIdx, 1);
-                }
+                //}
 
                 particleCount--;
 

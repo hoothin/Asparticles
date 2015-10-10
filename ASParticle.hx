@@ -24,7 +24,7 @@ class ASParticle
 		// Mode A: Gravity + tangential accel + radial accel
 		mode = {
 			A:{ gravity:new Point(), dir: new Point(),speed:.0, speedVar:.0, tangentialAccel:.0, tangentialAccelVar:.0, radialAccel:.0, radialAccelVar:.0 },
-			B:{startRadius:.0, startRadiusVar:.0, endRadius:.0, endRadiusVar:.0, rotatePerSecond:.0, rotatePerSecondVar:.0 }
+			B:{startRadius:.0, startRadiusVar:.0, endRadius:.0, endRadiusVar:.0, rotatePerSecond:.0, rotatePerSecondVar:.0, radius:.0, deltaRadius:.0, degreesPerSecond:.0, angle:.0 }
 		};
 	}
 }
